@@ -12,8 +12,9 @@ current_directory = os.getcwd()
 class neuralNetwork:   
     
     # Initialise the neural network.
+
     def __init__(self, inputNodes, hiddenNodes, outputNodes, learningRate, dropout_rate=None, noise_level=None, wkj=None,wjm=None,bj=None,bm=None):
-        
+      
         # Set number of nodes in each input, hidden, output layer.
         self.inodes = inputNodes
         self.hnodes = hiddenNodes
@@ -39,7 +40,7 @@ class neuralNetwork:
 
         # Dropout layer
         self.dropout_rate = dropout_rate
-
+        
         # Noise level
         self.noise_level = noise_level
 
@@ -296,6 +297,7 @@ class ResultPrinter:
 input_nodes = 784
 hidden_nodes = 196
 output_nodes = 10
+
 learning_rate = 0.1
 dropout_rate = None
 noise_level = None
@@ -314,8 +316,8 @@ pre_trained_weight_path = os.path.join(current_directory, relative_pre_trained_w
 wkj, wjm, bj, bm = ResultPrinter.read_weights(pre_trained_weight_path)
 
 # Create an instance of the neural network.
-n = neuralNetwork(input_nodes, hidden_nodes, output_nodes, learning_rate, dropout_rate, noise_level, wkj, wjm, bj, bm)"""
 
+n = neuralNetwork(input_nodes, hidden_nodes, output_nodes, learning_rate, dropout_rate, noise_level, wkj, wjm, bj, bm)"""
 
 # Create instance of result printer.
 result_printer = ResultPrinter()
