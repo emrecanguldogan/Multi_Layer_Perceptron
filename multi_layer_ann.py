@@ -37,6 +37,9 @@ class neuralNetwork:
         # Activation mode
         self.activation_mode = None
 
+        # Leaked ReLU alpha value
+        self.lre_alpha = 0.01
+
         # Dropout layer
         self.dropout_rate = dropout_rate
 
@@ -58,7 +61,7 @@ class neuralNetwork:
         # Stores the "mod" variable so that the net derivative calculation 
         # based on activation functions can be calculated in the "train" function.
         self.activation_mode = mod
-
+         
         if mod == 'Si' or mod == None:
             return 1 / (1 + np.exp(-x))
         elif mod == 'St':
@@ -67,7 +70,31 @@ class neuralNetwork:
             return np.maximum(x,0)
         elif mod == 'Ht':
             return np.tanh(x)
+        elif mod == 'LRe':
+            return np.maximum(x, self.lre_alpha * x)
         
+    # Derivative of the activation function.
+    def activation_derivative(self, x, mod = None):
+        self.activation_mode = mod
+        if mod == 'Si' or mod is None:
+            sigmoid_result = 1 / (1 + np.exp(-x))
+            return sigmoid_result * (1 - sigmoid_result)
+        elif mod == 'St':
+            return np.zeros_like(x)
+        elif mod == 'Re':
+            return np.where(x > 0, 1, 0)
+        elif mod == 'Ht':
+            tanh_result = np.tanh(x)
+            return 1 - tanh_result**2
+        elif mod == 'LRe':
+            return np.where(x > 0, 1, self.lre_alpha)
+
+    # Important note: The activation functions used in forward propagation 
+    # should be used in backward propagation as derivative of the activation functions.
+    # For example, if the sigmoid function is used in forward propagation between input to hidden layer,
+    # the derivative of the sigmoid function should be used in backward propagation between input to hidden layer.
+    # This should be done for both prediction and training functions.
+
     # Train the neural network.
     def train(self, input_list, target_list):
 
@@ -81,18 +108,18 @@ class neuralNetwork:
             noise = np.random.normal(0, noise_level, inputs.shape)
             inputs = inputs + noise
 
-        # Calculate signals into hidden layer.
+        # Calculate signals between input to hidden layer.
         Net_j = np.dot(self.wkj, inputs) + self.bj
-        Output_j = self.activation_func(Net_j)
+        Output_j = self.activation_func(Net_j, mod='Si')
 
         # Apply dropout to the hidden layer if dropout_rate is specified
         if self.dropout_rate is not None:
             dropout_mask = (np.random.rand(*Output_j.shape) < self.dropout_rate) / (1 - self.dropout_rate)
             Output_j *= dropout_mask
 
-        # Calculate signals into output layer.
+        # Calculate signals between hidden to output layer.
         Net_m = np.transpose(np.dot(np.transpose(Output_j),self.wjm)) + self.bm
-        Output_m = self.activation_func(Net_m)
+        Output_m = self.activation_func(Net_m, mod='Si')
 
         Expected_output = np.array(target_list, ndmin=2).T
 
@@ -104,8 +131,9 @@ class neuralNetwork:
 
         # Save predicted and expected results in lists.
         self.error_list = np.append(self.error_list, Error_m)
-        
-        delta_m = Output_m * (1 - Output_m) * Error_m
+
+        derivative_output = self.activation_derivative(Net_m, mod='Si')
+        delta_m = derivative_output * Error_m
         delta_Wjm = np.dot(Output_j, self.lr * np.transpose(delta_m))  
         self.wjm += delta_Wjm
 
@@ -115,8 +143,9 @@ class neuralNetwork:
         ###  Hidden layer's weights calculation
 
         hidden_error = np.dot(self.wjm, delta_m)
+        derivative_hidden = self.activation_derivative(Net_j, mod='Si')
 
-        delta_j = Output_j * (1 - Output_j) * hidden_error 
+        delta_j = derivative_hidden * hidden_error 
         delta_Wkj = np.dot(self.lr * delta_j, np.transpose(inputs))
         self.wkj += delta_Wkj
 
@@ -132,11 +161,11 @@ class neuralNetwork:
 
         # Calculate signals into hidden layer.
         Net_j = np.dot(self.wkj, inputs) + self.bj
-        Output_j = self.activation_func(Net_j)
+        Output_j = self.activation_func(Net_j, mod='Si')
 
         # Calculate signals into output layer
         Net_m = np.transpose(np.dot(np.transpose(Output_j),self.wjm)) + self.bm
-        Output_m = self.activation_func(Net_m)
+        Output_m = self.activation_func(Net_m, mod='Si')
 
         return Output_m
     
