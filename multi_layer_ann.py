@@ -12,7 +12,7 @@ current_directory = os.getcwd()
 class neuralNetwork:   
     
     # Initialise the neural network.
-    def __init__(self, inputNodes, hiddenNodes, outputNodes,learningRate,wkj=None,wjm=None,bj=None,bm=None):
+    def __init__(self, inputNodes, hiddenNodes, outputNodes, learningRate, dropout_rate=None, noise_level=None, wkj=None,wjm=None,bj=None,bm=None):
         
         # Set number of nodes in each input, hidden, output layer.
         self.inodes = inputNodes
@@ -36,6 +36,12 @@ class neuralNetwork:
 
         # Activation mode
         self.activation_mode = None
+
+        # Dropout layer
+        self.dropout_rate = dropout_rate
+
+        # Noise level
+        self.noise_level = noise_level
 
         # Used for testing neural network's success.
         self.actual_list = np.array([])
@@ -70,9 +76,19 @@ class neuralNetwork:
         # Convert input list to 2d array.
         inputs = np.array(input_list, ndmin=2).T
 
+        # Apply noise to the input layer if noise_level is specified
+        if noise_level is not None:
+            noise = np.random.normal(0, noise_level, inputs.shape)
+            inputs = inputs + noise
+
         # Calculate signals into hidden layer.
         Net_j = np.dot(self.wkj, inputs) + self.bj
         Output_j = self.activation_func(Net_j)
+
+        # Apply dropout to the hidden layer if dropout_rate is specified
+        if self.dropout_rate is not None:
+            dropout_mask = (np.random.rand(*Output_j.shape) < self.dropout_rate) / (1 - self.dropout_rate)
+            Output_j *= dropout_mask
 
         # Calculate signals into output layer.
         Net_m = np.transpose(np.dot(np.transpose(Output_j),self.wjm)) + self.bm
@@ -276,14 +292,18 @@ class ResultPrinter:
         return np.array(wkj), np.array(wjm), np.array(bj), np.array(bm)
 
 # Initialise neural network parameters.
+
 input_nodes = 784
 hidden_nodes = 196
 output_nodes = 10
-
-learning_rate = 0.035
+learning_rate = 0.1
+dropout_rate = None
+noise_level = None
+# dropout_rate = 0.10
+# noise_level = 0.03
 
 # Create instance of neural network.
-n = neuralNetwork(input_nodes, hidden_nodes, output_nodes, learning_rate)
+n = neuralNetwork(input_nodes, hidden_nodes, output_nodes, learning_rate, dropout_rate, noise_level)
 
 # If there are previously trained weight file exist
 
@@ -294,7 +314,7 @@ pre_trained_weight_path = os.path.join(current_directory, relative_pre_trained_w
 wkj, wjm, bj, bm = ResultPrinter.read_weights(pre_trained_weight_path)
 
 # Create an instance of the neural network.
-n = neuralNetwork(input_nodes, hidden_nodes, output_nodes, learning_rate, wkj, wjm, bj, bm)"""
+n = neuralNetwork(input_nodes, hidden_nodes, output_nodes, learning_rate, dropout_rate, noise_level, wkj, wjm, bj, bm)"""
 
 
 # Create instance of result printer.
