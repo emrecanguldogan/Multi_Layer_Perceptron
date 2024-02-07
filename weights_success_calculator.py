@@ -2,6 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix
 import csv
+import os
+
+# Get the current working directory path
+current_directory = os.getcwd()
 
 # Neural network class definition.
 class neuralNetwork:   
@@ -29,6 +33,9 @@ class neuralNetwork:
         # Activation mode
         self.activation_mode = None
 
+        # Leaked ReLU alpha value
+        self.lre_alpha = 0.01
+
         # Used for testing neural network's success.
         self.actual_list = np.array([])
         self.predict_list = np.array([])
@@ -44,7 +51,7 @@ class neuralNetwork:
         # Stores the "mod" variable so that the net derivative calculation 
         # based on activation functions can be calculated in the "train" function.
         self.activation_mode = mod
-
+         
         if mod == 'Si' or mod == None:
             return 1 / (1 + np.exp(-x))
         elif mod == 'St':
@@ -53,7 +60,12 @@ class neuralNetwork:
             return np.maximum(x,0)
         elif mod == 'Ht':
             return np.tanh(x)
-        
+        elif mod == 'LRe':
+            return np.maximum(x, self.lre_alpha * x)
+
+    # Important note: The activation functions used in in training 
+    # must be used same in this predict function.
+
     # Predict output according to neural network's weights.
     # Basically make forward propagation and return output layer's outputs.
     def predict(self, input_list):
@@ -63,11 +75,11 @@ class neuralNetwork:
 
         # Calculate signals into hidden layer.
         Net_j = np.dot(self.wkj, inputs) + self.bj
-        Output_j = self.activation_func(Net_j)
+        Output_j = self.activation_func(Net_j, mod='Si')
 
         # Calculate signals into output layer
         Net_m = np.transpose(np.dot(np.transpose(Output_j),self.wjm)) + self.bm
-        Output_m = self.activation_func(Net_m)
+        Output_m = self.activation_func(Net_m, mod='Si')
 
         return Output_m
     
@@ -186,11 +198,13 @@ result_printer = ResultPrinter()
 ###########################################################################
 
 # Specify the base file path and name
-base_file_path = "C:/Users/Emrecan/Desktop/Ysa_Project/weight_bias_value_750.csv"
+relative_base_file_path = "Pre_trained_weights/weight_bias_value_750.csv"
+base_file_path = os.path.join(current_directory, relative_base_file_path)
 
-#test_data_file = open("C:/Users/Emre/Desktop/ysa_yeni_donem/Ysa_Proje/dataset.csv", 'r')
-test_data_file = open("C:/Users/Emrecan/Desktop/Ysa_Project/Data/fashion-mnist_test.csv", 'r')
-#test_data_file = open("C:/Users/Emre/Desktop/ysa_yeni_donem/Ysa_Proje/Data/fashion-mnist_test.csv", 'r')
+relative_test_path = "Data/fashion-mnist_test.csv"
+test_path = os.path.join(current_directory, relative_test_path)
+
+test_data_file = open(test_path, 'r')
 test_data_list = test_data_file.readlines()
 test_data_file.close()
 prediction_count = 0
