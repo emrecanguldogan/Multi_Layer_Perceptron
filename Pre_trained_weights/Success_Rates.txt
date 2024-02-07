@@ -1,0 +1,50 @@
+# With fashion-mnist_test.csv
+
+weight_bias_value_50 Success:  0.883900
+weight_bias_value_100 Success: 0.886900
+weight_bias_value_150 Success: 0.887400
+weight_bias_value_200 Success: 0.887500
+weight_bias_value_250 Success: 0.888200
+weight_bias_value_300 Success: 0.887500
+weight_bias_value_350 Success: 0.887100
+weight_bias_value_400 Success: 0.888000
+weight_bias_value_450 Success: 0.887300
+weight_bias_value_500 Success: 0.888600
+weight_bias_value_550 Success: 0.887700
+weight_bias_value_600 Success: 0.887400
+weight_bias_value_650 Success: 0.887800
+weight_bias_value_700 Success: 0.888100
+weight_bias_value_750 Success: 0.888900
+weight_bias_value_800 Success: 0.888000
+weight_bias_value_850 Success: 0.887400
+weight_bias_value_900 Success: 0.888500
+weight_bias_value_950 Success: 0.888500
+weight_bias_value_1000 Success: 0.885500
+
+# With fashion-mnist_train.csv
+weight_bias_value_50 Success: 0.927467
+weight_bias_value_100 Success: 0.945500
+weight_bias_value_150 Success: 0.954950
+weight_bias_value_200 Success: 0.960500
+weight_bias_value_250 Success: 0.964167
+weight_bias_value_300 Success: 0.967017
+weight_bias_value_350 Success: 0.971500
+weight_bias_value_400 Success: 0.974750
+weight_bias_value_450 Success: 0.976717
+weight_bias_value_500 Success: 0.978267
+weight_bias_value_550 Success: 0.979633
+weight_bias_value_600 Success: 0.980517
+weight_bias_value_650 Success: 0.981217
+weight_bias_value_700 Success: 0.981633
+weight_bias_value_750 Success: 0.982067
+weight_bias_value_800 Success: 0.981333
+weight_bias_value_850 Success: 0.982767
+weight_bias_value_900 Success: 0.982983
+weight_bias_value_950 Success: 0.983133
+weight_bias_value_1000 Success: 0.974800
+
+! Note : All weights trained using fashion-mnist_train.csv for using bellow settings;
+- input_nodes = 784
+- hidden_nodes = 196
+- output_nodes = 10
+- learning_rate = 0.035
