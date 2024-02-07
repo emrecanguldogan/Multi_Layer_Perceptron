@@ -48,3 +48,7 @@ weight_bias_value_1000 Success: 0.974800
 - hidden_nodes = 196
 - output_nodes = 10
 - learning_rate = 0.035
+- dropout = None
+- noise_level = None
+
+And sigmoid is chossen for all layers as activation function.
