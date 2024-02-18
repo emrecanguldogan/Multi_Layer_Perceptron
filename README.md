@@ -1,4 +1,4 @@
-# MultiLayer Perceptron
+# MultiLayer Perceptron With Numpy
 
 Complete multi layer perceptron project writen by using numpy for calculations. I add a lot functionality to this project and make it well commented for make understandable to people who new to this area.
 This project using fashion-mnist dataset original here https://github.com/zalandoresearch/fashion-mnist.git. But I use csv converted version in https://www.kaggle.com/datasets/zalando-research/fashionmnist.
